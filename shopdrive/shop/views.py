@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User
+from .models import User,Good,Bill,Good_item_in_bill
 import json
 # Create your views here.
 def shophome(request):
