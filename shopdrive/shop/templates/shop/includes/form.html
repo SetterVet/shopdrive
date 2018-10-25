@@ -1,8 +1,9 @@
-<form>
+<form method="post">
+  {% csrf_token %}
   <div class="form-group">
-    <label for="exampleInputEmail">Email address</label>
-    <input type="email" class="form-control" id="exampleInputEmail" placeholder="Enter email">
+    <label for="mail">Email address</label>
+    <input type="email" class="form-control" id="mail" name="mail" placeholder="Enter email">
 
   </div>
-    <a href="{% url 'auth' %}"><button  class="btn btn-success">Submit</button></a>
+    <button  class="btn btn-success">Submit</button>
 </form>
