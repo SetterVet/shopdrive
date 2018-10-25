@@ -1,8 +1,14 @@
 {% load static from staticfiles %}
-<nav class="nav nav-pills nav-fill navbar-light" style='background-color: #e3f2fd;'>
+<nav class="nav nav-pills nav-fill navbar-dark bg-dark" style='background-color: #e3f2fd;'>
   <img src="{% static 'image/logo.png' %}" width="60" height="40"/>
-  <a class="nav-item nav-link active" href="#">Active</a>
-  <a class="nav-item nav-link" href="#">Link</a>
-  <a class="nav-item nav-link" href="#">Link</a>
-  <a class="nav-item nav-link disabled" href="#">Disabled</a>
+  <a class="nav-item nav-link"  href="{% url 'home' %}">Головна</a>
+  <a class="nav-item nav-link" href="{% url 'good_list' %}">Товари</a>
+  <a class="nav-item nav-link" href="{% url 'auth' %}">Кабінет</a>
+  <a class="nav-item nav-link" href="#">Контакти</a>
+  <form class="form-inline">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
 </nav>
+
+

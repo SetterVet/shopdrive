@@ -18,5 +18,7 @@ from django.urls import path
 from shop import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.shophome, name='shophome'),
+    path('', views.shophome, name='home'),
+    path('good/', views.shopgood, name='good_list'),
+    path('authentification/', views.auth, name='auth'),
 ]
