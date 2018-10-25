@@ -34,27 +34,30 @@ class Bill(models.Model):
         return str(self.check_id)
 
     def set_total_price(self):
-        bill_item=Good_item_in_bill.objects.filter(bill = self)
-        good_item,count_item=[],[]
+        bill_item=Order.objects.filter(id_bill = self)
+        good_priceitem,count_item=[],[]
         for item in bill_item:
-            good_item.append(item.good)
+            good_item=Good.objects.get(id=item.id_good)
+            good_priceitem.append(good_item.price)
             count_item.append(item.count)
         total_price=0.0
+        print(good_priceitem)
+        print(count_item)
         for i in range(len(bill_item)):
             total_price+=good_item[i]*count_item[i]
-        self.total_price=total_price
+        self.total_price=5.2
 
 
-class Good_item_in_bill(models.Model):
-    bill=models.ForeignKey(Bill, related_name='bill',on_delete=models.CASCADE)
-    good=models.ForeignKey(Good, related_name='good',on_delete=models.CASCADE)
+class Order(models.Model):
+    id_bill=models.ForeignKey(Bill, related_name='bill',on_delete=models.CASCADE)
+    id_good=models.ForeignKey(Good, related_name='good',on_delete=models.CASCADE)
     count= models.DecimalField(decimal_places=2, max_digits=100000)
 
     def __str__(self):
-        return "Add to "+str(self.bill.__str__)+" bill "+str(self.good.__str__)
+        return "Add to "+str(self.id_bill.__str__)+" bill "+str(self.id_good.__str__)
 
     def delete_unit_from_shop(self):
-        good_item=Good.objects.get(good = self.good)
+        good_item=Good.objects.get(good = self.id_good)
         if good_item.count>self.count:
             good_item-=self.count
             good_item.save()

@@ -1,13 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User,Good,Bill,Good_item_in_bill
+from .models import User,Good,Bill,Order
 import json
 # Create your views here.
 def shophome(request):
-    emails =[]
-    user_list = User.objects.all()
-    for user in user_list:
-        emails.append(user.email)
-    print(emails)
-
-    return HttpResponse("<h1>Main Page</h1>")
+    bill=Bill.objects.all()[0]
+    bill_items=Order.objects.filter(id=2)
+    print(bill)
+    print(bill_items)
+    # bill.set_total_price()
+    # print(bill.total_price)
+    # bill.save()
+    goods=Good.objects.all()
+    return render(request,'shop/index.html',{'goods':goods})

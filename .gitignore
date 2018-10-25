@@ -2,3 +2,4 @@ secret.py
 venv/
 .idea/
 db.sqlite3
+media/
