@@ -12,9 +12,33 @@
 
 </head>
 <body>
-{% include 'shop/includes/header.html' %}
-LOREM IPSUM
-{{ user.first_name }}
-{{ user.last_name }}
+<div class="row">
+    <div class="col-md-4">
+        <h3>Особиста Інформація</h3>
+            <div class="homebackground">
+            <p>Прізвище {{user.last_name}}</p>
+            <p>Ім'я {{user.first_name}}</p>
+            <p>Email {{user.email}}</p>
+            </div>
+    </div>
+    <div class="col-md-4">
+        <h3>Ваші замовлення</h3>
+        <div class="bills">
+            {% if bills %}
+                {% for item in bills %}
+                    <p>Номер Чеку {{item.check_id}}</p>
+                    <p>Дата приїзду за покупкою {{item.expected_date}}</p>
+                    <p>Вартість {{item.total_price}}</p>
+                {% endfor %}
+
+            {% else %}
+            <p> Ще не має чеків але, це можна виправити)</p>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
 </body>
 </html>

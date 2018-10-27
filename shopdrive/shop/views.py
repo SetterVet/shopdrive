@@ -8,7 +8,11 @@ import json
 # Create your views here.
 def profile_item(request,userid):
     current_user=User.objects.get(pk=userid)
-    return render(request, 'shop/profileuser.html',{'user':current_user})
+    bills=Bill.objects.filter(user=current_user)
+    for item in bills:
+        item.set_total_price()
+        item.save()
+    return render(request, 'shop/profileuser.html',{'user':current_user,'bills':bills})
 
 def shophome(request):
     if request.method=='POST':
@@ -38,5 +42,6 @@ def room(request):
             return profile_item(request,user.pk)
         except User.DoesNotExist:
             content="This email not in database . Please register"
+
             return render(request,'shop/room.html',{'content':content})
     return render(request, 'shop/room.html')
