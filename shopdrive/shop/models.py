@@ -1,5 +1,5 @@
 from django.db import models
-
+import math
 
 # Create your models here.
 class Good(models.Model):
@@ -45,7 +45,7 @@ class Bill(models.Model):
         print(count_item)
         for i in range(len(bill_item)):
             total_price += float(good_priceitem[i]) * float(count_item[i])
-        self.total_price = total_price
+        self.total_price = round(total_price, 2)
         self.save()
 
 

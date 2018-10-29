@@ -1,47 +1,50 @@
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User, Good, Bill, Order
-
+from django.http import HttpResponseRedirect
 import json
 
 
 # Create your views here.
-def profile_item(request,userid):
-    current_user=User.objects.get(pk=userid)
-    bills=Bill.objects.filter(user=current_user)
+def profile_item(request, pk):
+
+    current_user = User.objects.get(pk=pk)
+    bills = Bill.objects.filter(user=current_user)
     for item in bills:
         item.set_total_price()
         item.save()
-    return render(request, 'shop/profileuser.html',{'user':current_user,'bills':bills})
+    return render(request, 'shop/profileuser.html', {'user': current_user, 'bills': bills})
+
 
 def shophome(request):
-    if request.method=='POST':
-        postemail=request.POST['mail']
+    if request.method == 'POST':
+        postemail = request.POST['mail']
         try:
-            user=User.objects.get(email=postemail)
+            user = User.objects.get(email=postemail)
             print(user)
-            return profile_item(request,user.pk)
+            return HttpResponseRedirect("/user/" + str(user.pk))
         except User.DoesNotExist:
-            content="This email not in database . Please register"
-            return render(request,'shop/index.html',{'content':content})
+            content = "This email not in database . Please register"
+            return render(request, 'shop/index.html', {'content': content})
 
     return render(request, 'shop/index.html')
 
 
-
 def shopgood(request):
-    goods=Good.objects.all()
+    goods = Good.objects.all()
     return render(request, 'shop/goodlist.html', {'goods': goods})
 
-def room(request):
-    if request.method=='POST':
-        postemail=request.POST['mail']
-        try:
-            user=User.objects.get(email=postemail)
-            print(user)
-            return profile_item(request,user.pk)
-        except User.DoesNotExist:
-            content="This email not in database . Please register"
 
-            return render(request,'shop/room.html',{'content':content})
+def room(request):
+    if request.method == 'POST':
+        postemail = request.POST['mail']
+        try:
+            user = User.objects.get(email=postemail)
+            print(user)
+            return HttpResponseRedirect("/user/" + str(user.pk))
+        except User.DoesNotExist:
+            content = "This email not in database . Please register"
+
+            return render(request, 'shop/room.html', {'content': content})
     return render(request, 'shop/room.html')
