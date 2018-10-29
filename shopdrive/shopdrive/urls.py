@@ -20,6 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.shophome, name='home'),
     path('good/', views.shopgood, name='good_list'),
-    path('user/(?P<pk>\d+)$/', views.profile_item, name='profile_item'),
+    path('user/<int:pk>', views.profile_item, name='profile_item'),
     path('room/', views.room, name='room'),
 ]

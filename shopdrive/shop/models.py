@@ -1,5 +1,5 @@
 from django.db import models
-
+import math
 
 # Create your models here.
 class Good(models.Model):
@@ -26,8 +26,8 @@ class Bill(models.Model):
     check_id = models.IntegerField(verbose_name='check_id', default=0, unique=True)
     expected_date = models.DateField()
     total_price = models.DecimalField(decimal_places=2, max_digits=10000000, default=0.00)
-    created = models.DateTimeField(verbose_name='Создан', auto_now_add=True, blank=False)
-    updated = models.DateTimeField(verbose_name='Обновлен', auto_now=True, blank=False)
+    created = models.DateTimeField(verbose_name='Создан', auto_now_add=True, blank=False,TIME_OUTPUT_FORMATS='%H:%M:%S')
+    updated = models.DateTimeField(verbose_name='Обновлен', auto_now=True, blank=False,TIME_OUTPUT_FORMATS='%H:%M:%S')
     user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -45,7 +45,7 @@ class Bill(models.Model):
         print(count_item)
         for i in range(len(bill_item)):
             total_price += float(good_priceitem[i]) * float(count_item[i])
-        self.total_price = total_price
+        self.total_price = round(total_price, 2)
         self.save()
 
 

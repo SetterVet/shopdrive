@@ -1,17 +1,7 @@
+{% extends "shop/index.html" %}
 {% load static from staticfiles %}
-
-<html >
-<head>
-    <meta charset="UTF-8">
-
-    <title>shopdrive</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
-    <link rel="favicon" href="{% static 'image/logo.png' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/my.css' %}"/>
-</head>
-<body>
-{% include 'shop/includes/header.html' %}
+{% block title%} - Товари {% endblock title%}
+{% block content %}
     <div class="row">
         {% for item in goods %}
         <div class="col-md-3">
@@ -24,5 +14,4 @@
         </div>
         {% endfor %}
     </div>
-</body>
-</html>
+{% endblock content%}
