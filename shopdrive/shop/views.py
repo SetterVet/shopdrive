@@ -3,12 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User, Good, Bill, Order
 from django.http import HttpResponseRedirect
+
 import json
 
 
 # Create your views here.
 def profile_item(request, pk):
-
+    request.session['user_id'] = pk
     current_user = User.objects.get(pk=pk)
     bills = Bill.objects.filter(user=current_user)
     for item in bills:
@@ -48,3 +49,10 @@ def room(request):
 
             return render(request, 'shop/room.html', {'content': content})
     return render(request, 'shop/room.html')
+
+def logout(request):
+    try:
+        del request.session['user_id']
+    except KeyError:
+        pass
+    return HttpResponseRedirect('/')

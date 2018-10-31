@@ -22,4 +22,5 @@ urlpatterns = [
     path('good/', views.shopgood, name='good_list'),
     path('user/<int:pk>', views.profile_item, name='profile_item'),
     path('room/', views.room, name='room'),
+    path('logout/', views.logout, name='logout'),
 ]
