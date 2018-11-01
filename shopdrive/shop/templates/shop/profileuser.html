@@ -10,7 +10,9 @@
             <p>Ім'я {{user.first_name}}</p>
             <p>Email {{user.email}}</p>
             </div>
+        <a href="{% url 'good_list' %}"><button class="btn btn-primary">Створити нову покупку</button></a>
         <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">Вийти</button></a>
+
     </div>
     <div class="col-md-4">
         <h3>Ваші замовлення</h3>

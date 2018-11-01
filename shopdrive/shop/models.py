@@ -1,7 +1,22 @@
 from django.db import models
-import math
+from random import randrange
+import datetime
+
 
 # Create your models here.
+class User(models.Model):
+    first_name = models.CharField(max_length=40, default='first_name')
+    last_name = models.CharField(max_length=60, default='last_name')
+    email = models.EmailField(default='a@com')
+
+    def __str__(self):
+        return str(self.last_name) + " " + str(self.first_name)
+
+    @staticmethod
+    def create(first, last, email):
+        a = User(first_name=first, last_name=last, email=email)
+        a.save()
+
 class Good(models.Model):
     name = models.CharField(max_length=256, blank=False, verbose_name="Name")
     weight_and_unit = models.CharField(max_length=64, blank=False, verbose_name='weight_and_unit')
@@ -13,18 +28,11 @@ class Good(models.Model):
         return str(self.name) + " " + str(self.weight_and_unit)
 
 
-class User(models.Model):
-    first_name = models.CharField(max_length=40)
-    last_name = models.CharField(max_length=60)
-    email = models.EmailField()
-
-    def __str__(self):
-        return str(self.last_name) + " " + str(self.first_name)
 
 
 class Bill(models.Model):
     check_id = models.IntegerField(verbose_name='check_id', default=0, unique=True)
-    expected_date = models.DateField()
+    expected_date = models.DateField(blank=True)
     total_price = models.DecimalField(decimal_places=2, max_digits=10000000, default=0.00)
     created = models.DateTimeField(verbose_name='Создан', auto_now_add=True, blank=False)
     updated = models.DateTimeField(verbose_name='Обновлен', auto_now=True, blank=False)
@@ -48,6 +56,14 @@ class Bill(models.Model):
         self.total_price = round(total_price, 2)
         self.save()
 
+    @staticmethod
+    def create(user):
+        while True:
+            check = randrange(0, 100000)
+            if not Bill.objects.filter(check_id=check).all():
+                break
+        a = Bill(check_id=check, user=user)
+        a.save()
 
 class Order(models.Model):
     id_bill = models.ForeignKey(Bill, related_name='bill', on_delete=models.CASCADE)

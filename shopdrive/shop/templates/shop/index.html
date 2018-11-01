@@ -31,6 +31,7 @@
             {% if login %}
                 <p>Ви вже залоговані для здійснення покупок та прегляду попередніх пройдіть в кабінет</p>
                 <a href="/user/{{login}}"><button type="button" class="btn btn-info">Перейти у свій кабінет</button></a>
+                <a href="/logout"><button type="button" class="btn btn-danger">Вийти</button></a>
             {% else %}
                 {% include 'shop/includes/form.html' %}
                 {% if content %}

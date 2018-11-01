@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User, Good, Bill, Order
 from django.http import HttpResponseRedirect
-
+from django.shortcuts import redirect
 import json
 
 
@@ -74,3 +74,14 @@ def logout(request):
     except KeyError:
         pass
     return HttpResponseRedirect('/')
+
+def registration(request):
+    if request.method=='POST':
+        if User.objects.filter(email=request.POST['mail']).all():
+            return render(request, 'shop/index.html',{'content':"Користувач з таким email вже зареєстрований увійдіть в свій кабінет"})
+        else:
+            User.create(first=request.POST['first'],last=request.POST['last'],email=request.POST['mail'])
+            current_user=User.objects.get(email=request.POST['mail'])
+            return HttpResponseRedirect("/user/"+str(current_user.pk))
+
+    return render(request, 'shop/registration.html')
