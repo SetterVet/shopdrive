@@ -6,7 +6,7 @@
 
     <title>shopdrive {% block title %} {% endblock title %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
-    <link rel="icon" type='image/x-icon' href="{% static 'image/logo.png' %}">
+    <link rel="icon" type='image/x-icon' href="{% static 'image/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/my.css' %}"/>
 
@@ -19,7 +19,7 @@
             <img src="{% static 'image/home.jpg' %}"/>
 
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
 
             <div class="homebackground">
                 <p>
@@ -27,12 +27,17 @@
                 </p>
             </div>
         </div>
-        <div class="col-md-2">
-            {% include 'shop/includes/form.html' %}
-            {% if content %}
-            <div class="alert alert-danger" role="alert">
-                {{ content }}
-            </div>
+        <div class="col-md-3">
+            {% if login %}
+                <p>Ви вже залоговані для здійснення покупок та прегляду попередніх пройдіть в кабінет</p>
+                <a href="/user/{{login}}"><button type="button" class="btn btn-info">Перейти у свій кабінет</button></a>
+            {% else %}
+                {% include 'shop/includes/form.html' %}
+                {% if content %}
+                <div class="alert alert-danger" role="alert">
+                    {{ content }}
+                </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>

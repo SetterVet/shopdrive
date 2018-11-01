@@ -3,15 +3,32 @@
 {% block title%} - Товари {% endblock title%}
 {% block content %}
     <div class="row">
-        {% for item in goods %}
-        <div class="col-md-3">
-            <p class="text-warning">
-            {{ item }}
-            </p>
-        </div>
-        <div class="col-md-3">
-            <input type="number" placeholder={{ item.count }}/>
-        </div>
-        {% endfor %}
+        {% if login == False %}
+            {% for item in goods %}
+            <div class="col-md-3">
+                <p>
+                {{ item }}
+                </p>
+            </div>
+            <div class="col-md-3">
+                <input type="number" placeholder={{ item.count }} disabled />
+            </div>
+            {% endfor %}
+        {% else %}
+            {% for item in goods %}
+                <div class="col-md-3">
+                <p>
+                {{ item }}<br/>
+                Ціна - {{ item.price }}<br/>
+                Дата вжитку - {{item.end_date}}
+                </p>
+            </div>
+            <div class="col-md-3">
+                <input type="number" placeholder={{ item.count }} />
+            </div>
+            {% endfor %}
+
+        {% endif %}
+
     </div>
 {% endblock content%}

@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User, Good, Bill, Order
@@ -19,7 +18,9 @@ def profile_item(request, pk):
 
 
 def shophome(request):
-    if request.method == 'POST':
+    if 'user_id' in request.session:
+        return render(request, 'shop/index.html', {'login':request.session['user_id']})
+    elif request.method == 'POST':
         postemail = request.POST['mail']
         try:
             user = User.objects.get(email=postemail)
@@ -29,16 +30,30 @@ def shophome(request):
             content = "This email not in database . Please register"
             return render(request, 'shop/index.html', {'content': content})
 
-    return render(request, 'shop/index.html')
+    else:
+        return render(request, 'shop/index.html')
 
 
 def shopgood(request):
     goods = Good.objects.all()
-    return render(request, 'shop/goodlist.html', {'goods': goods})
+    if 'user_id' in request.session:
+        return render(request, 'shop/goodlist.html', {'goods': goods, 'login': True})
+    else:
+        return render(request, 'shop/goodlist.html', {'goods': goods, 'login': False})
 
 
 def room(request):
-    if request.method == 'POST':
+    if 'user_id' in request.session:
+        try:
+            user = User.objects.get(pk=request.session['user_id'])
+            print(user)
+            return HttpResponseRedirect("/user/" + str(user.pk))
+        except User.DoesNotExist:
+            content = "This email not in database . Please register"
+
+            return render(request, 'shop/room.html', {'content': content})
+
+    elif request.method == 'POST':
         postemail = request.POST['mail']
         try:
             user = User.objects.get(email=postemail)
@@ -48,7 +63,10 @@ def room(request):
             content = "This email not in database . Please register"
 
             return render(request, 'shop/room.html', {'content': content})
-    return render(request, 'shop/room.html')
+
+    else:
+        return render(request, 'shop/room.html')
+
 
 def logout(request):
     try:
