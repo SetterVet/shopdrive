@@ -4,6 +4,7 @@ from .models import User, Good, Bill, Order
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 import json
+import datetime
 
 
 # Create your views here.
@@ -19,7 +20,7 @@ def profile_item(request, pk):
 
 def shophome(request):
     if 'user_id' in request.session:
-        return render(request, 'shop/index.html', {'login':request.session['user_id']})
+        return render(request, 'shop/index.html', {'login': request.session['user_id']})
     elif request.method == 'POST':
         postemail = request.POST['mail']
         try:
@@ -36,7 +37,24 @@ def shophome(request):
 
 def shopgood(request):
     goods = Good.objects.all()
-    if 'user_id' in request.session:
+    if request.method == 'POST' and 'user_id' in request.session:
+        current_user = User.objects.get(pk=request.session['user_id'])
+        created_bill_pk = Bill.create(user=current_user, godate=request.POST['expected_date'])
+        current_bill = Bill.objects.get(pk=created_bill_pk)
+        counts, pks = list(), list()
+        for item in goods:
+            if request.POST[str(item.pk)] != '':
+                good_item = Good.objects.get(pk=item.pk)
+                item_order = Order.create(bill=current_bill, good=good_item, count=request.POST[str(item.pk)])
+                current_bill_order = Order.objects.get(pk=item_order)
+                current_bill_order.delete_unit_from_shop()
+                if current_bill_order.delete_from_shop == False:
+                    current_bill_order.delete()
+
+        current_bill.set_total_price()
+        current_bill.save()
+        return HttpResponseRedirect('/user/' + str(request.session['user_id']))
+    elif 'user_id' in request.session:
         return render(request, 'shop/goodlist.html', {'goods': goods, 'login': True})
     else:
         return render(request, 'shop/goodlist.html', {'goods': goods, 'login': False})
@@ -75,13 +93,33 @@ def logout(request):
         pass
     return HttpResponseRedirect('/')
 
+
 def registration(request):
-    if request.method=='POST':
+    if request.method == 'POST':
         if User.objects.filter(email=request.POST['mail']).all():
-            return render(request, 'shop/index.html',{'content':"Користувач з таким email вже зареєстрований увійдіть в свій кабінет"})
+            return render(request, 'shop/index.html',
+                          {'content': "Користувач з таким email вже зареєстрований увійдіть в свій кабінет"})
         else:
-            User.create(first=request.POST['first'],last=request.POST['last'],email=request.POST['mail'])
-            current_user=User.objects.get(email=request.POST['mail'])
-            return HttpResponseRedirect("/user/"+str(current_user.pk))
+            User.create(first=request.POST['first'], last=request.POST['last'], email=request.POST['mail'])
+            current_user = User.objects.get(email=request.POST['mail'])
+            return HttpResponseRedirect("/user/" + str(current_user.pk))
 
     return render(request, 'shop/registration.html')
+
+
+def createbill(request):
+    if request.method == 'POST' and 'user_id' in request.session:
+        return HttpResponseRedirect('/user/' + str(request.session['user_id']))
+    else:
+        return HttpResponseRedirect("/good/")
+
+
+def deletebill(request,pk):
+    current_bill=Bill.objects.get(pk=pk)
+    current_bill.delete_bill()
+    return HttpResponseRedirect('/user/'+str(request.session['user_id']))
+
+def editbill(request,pk):
+    current_bill=Bill.objects.get(pk=pk)
+    orders=Order.objects.filter(id_bill=current_bill).all()
+    goods=Good.objects.all()

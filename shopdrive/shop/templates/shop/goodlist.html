@@ -2,9 +2,10 @@
 {% load static from staticfiles %}
 {% block title%} - Товари {% endblock title%}
 {% block content %}
-    <div class="row">
+
         {% if login == False %}
             {% for item in goods %}
+            <div class="row">
             <div class="col-md-3">
                 <p>
                 {{ item }}
@@ -13,8 +14,13 @@
             <div class="col-md-3">
                 <input type="number"  placeholder=0 disabled />
             </div>
+            </div>
             {% endfor %}
         {% else %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
             {% for item in goods %}
                 <div class="col-md-3">
                   <label for="{{item.pk}}">
@@ -25,10 +31,17 @@
                     </p>
                   </label>
                 </div>
-            <div class="col-md-3">
-                <input type="number" name="{{item.pk}}" id="{{item.pk}}" placeholder='0' />
-            </div>
+                <div class="col-md-2">
+                    <input type="number" name="{{item.pk}}" id="{{item.pk}}" placeholder='0' step="0.001" />
+                </div>
             {% endfor %}
+                <div class="col-md-2">
+                    <label for="expected_date">Дата приїзду за покупкою</label>
+                    <input type="date" name="expected_date" id="expected_date"/>
+                    <a href="{% url 'createbill' %}"><input type="submit" value="Оформити чек" class="btn btn-success"/></a>
+                </div>
+             </div>
+        </form>
 
         {% endif %}
 

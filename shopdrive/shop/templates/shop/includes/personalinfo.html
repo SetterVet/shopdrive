@@ -1,0 +1,15 @@
+<h3>Особиста Інформація</h3>
+        <div class="homebackground">
+            <p>Прізвище {{user.last_name}}</p>
+            <p>Ім'я {{user.first_name}}</p>
+            <p>Email {{user.email}}</p>
+        </div>
+        <a href="{% url 'good_list' %}">
+            <button class="btn btn-primary">Створити нову покупку</button>
+        </a>
+        <a href="{% url 'logout' %}">
+            <button type="button" class="btn btn-danger">Вийти</button>
+        </a>
+        {% if content %}
+        <p class="text-danger">{{ content }}</p>
+        {% endif %}

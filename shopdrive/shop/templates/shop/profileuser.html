@@ -4,38 +4,49 @@
 {% block content %}
 <div class="row">
     <div class="col-md-4">
-        <h3>Особиста Інформація</h3>
-            <div class="homebackground">
-            <p>Прізвище {{user.last_name}}</p>
-            <p>Ім'я {{user.first_name}}</p>
-            <p>Email {{user.email}}</p>
-            </div>
-        <a href="{% url 'good_list' %}"><button class="btn btn-primary">Створити нову покупку</button></a>
-        <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">Вийти</button></a>
-
+        {% include 'shop/includes/personalinfo.html' %}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-8">
         <h3>Ваші замовлення</h3>
         <div class="bills">
             {% if bills %}
-                <ul class="list group">
-                     {% for item in bills %}
-                       <li li class="list-group-item d-flex justify-content-between align-items-center">
 
-                        Номер Чеку {{item.check_id}}
-                        Вартість {{item.total_price}}
-                        Cтворено {{item.created}}
-                        Оновлено {{item.updated}}
+            {% for item in bills %}
+
+            <ul class="list-group-item billsitem">
+
+
+                    <li class=" d-flex justify-content-between align-items-center">
+                    <div class="col-md-7">
+                        Номер Чеку {{item.check_id}}<br/>
+                        Вартість {{item.total_price}}<br/>
+                        Cтворено {{item.created}}<br/>
+                        Оновлено {{item.updated}}<br/>
+                        Очікувана дата прибуття
                         <span class="badge badge-primary badge-pill">{{item.expected_date}}</span>
-                    {% endfor %}
-                </ul>
-            {% else %}
-            <p> Ще не має чеків але, це можна виправити)</p>
-            {% endif %}
+                    </div>
+                         <div class="col-md-2">
+                    <a href="#">
+                        <button class="btn btn-warning">Редагувати Чек</button>
+                    </a>
+                </div>
+                <div class="col-md-2">
 
+                    <a href="/deletebill/{{ item.pk }}">
+                        <button class="btn btn-danger">Видалити Чек</button>
+                    </a>
+                </div>
+                    </li>
+
+
+            </ul>
+
+
+            {% endfor %}
         </div>
-    </div>
-    <div class="col-md-4">
+        {% else %}
+        <p> Ще не має чеків але, це можна виправити)</p>
+        {% endif %}
     </div>
 </div>
 {% endblock content %}
