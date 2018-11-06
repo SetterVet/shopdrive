@@ -2,5 +2,99 @@
 {% load static from staticfiles %}
 {% block title%} - Товари {% endblock title%}
 {% block content %}
-<h1>COOOOOLLLLLLLLLLLLLLL</h1>
+<div class="row">
+    <div class="col-md-3">
+        {% include 'shop/includes/personalinfo.html' %}<br/><br/>
+        <a href="/user/{{user.pk}}">
+            <button class="btn btn-outline-info">Повернутися до списку чеків</button>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <h2>Інформація про чек</h2>
+        <div class="homebackground">
+            <p> Номер Чеку №{{bill.check_id}}<br/>
+                Вартість {{bill.total_price}}<br/>
+
+                Cтворено {{bill.created}}<br/>
+                Оновлено {{bill.updated}}<br/>
+                Очікувана дата прибуття
+                <span class="badge badge-primary badge-pill">{{bill.expected_date}}</span>
+
+            </p>
+            <a href="/deletebill/{{ bill.pk }}">
+                <button class="btn btn-outline-danger">Видалити Чек</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="row">
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="submit" value="Зберегти зміни" class="btn btn-success"/>
+                <p id="current_check">Редагування чеку №{{bill.check_id}}</p>
+                <label for="expected_date">Дата приїзду за покупкою</label>
+                <input type="date" name="expected_date" id="expected_date" value="{{bill.expected_date}}"/>
+                <h6>Ваші товари в чеку</h6>
+
+                {% for item in in_bill %}
+                <div class="row">
+                    <div class="col-md-8 list-group-item" style="border-width : 2px; border-radius: 8px;">
+
+                        <label for="{{ item.pk }}">
+                            <p>
+                                {{ item }}<br/>
+                                Ціна - {{ item.price }}<br/>
+                                Дата вжитку - {{item.end_date}}
+                            </p>
+                        </label>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        {% if item.end_date < today %}
+                        <input disabled placeholder="Закінчився термін придатності"/>
+                        {% else %}
+                        <input type="number" step="0.001" name="{{item.pk}}" id="{{item.pk}}"
+                               value='{{item.count_of_good}}'/>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                {% endfor %}
+                <h4>Додати інші товари</h4>
+                {% for item in not_in_bill %}
+                <div class="row">
+                    <div class="col-md-8 list-group-item"style="border-width : 2px; border-radius: 8px;">
+
+                        <label for="{{ item.pk }}">
+                            <p>
+                                {{ item }}<br/>
+                                Ціна - {{ item.price }}<br/>
+                                Дата вжитку - {{item.end_date}}
+                            </p>
+                        </label>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        {% if item.end_date < today %}
+                        <input disabled placeholder="Закінчився термін придатності"/>
+                        {% else %}
+                        <input type="number" step="0.001" name="{{item.pk}}" id="{{item.pk}}"
+                               placeholder="0"/>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% endfor %}
+            </form>
+        </div>
+
+    </div>
+
+
+</div>
 {% endblock content%}

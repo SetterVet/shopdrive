@@ -46,7 +46,7 @@ class Bill(models.Model):
         for item in bill_item:
             good_item = Good.objects.get(id=item.id_good.id)
             good_priceitem.append(good_item.price)
-            count_item.append(item.count)
+            count_item.append(item.count_of_good)
         total_price = 0.0
         print(good_priceitem)
         print(count_item)
@@ -75,18 +75,18 @@ class Bill(models.Model):
 class Order(models.Model):
     id_bill = models.ForeignKey(Bill, related_name='bill', on_delete=models.CASCADE)
     id_good = models.ForeignKey(Good, related_name='good', on_delete=models.CASCADE)
-    count = models.DecimalField(decimal_places=3, max_digits=10)
+    count_of_good = models.DecimalField(decimal_places=3, max_digits=10)
     delete_from_shop = models.BooleanField(default=False)
 
     def __str__(self):
         return "Add to " + str(self.id_bill.__str__) + " bill " + str(self.id_good.__str__) + "count -" + str(
-            self.count)
+            self.count_of_good)
 
     def delete_unit_from_shop(self):
         if self.delete_from_shop == False:
             good_item = Good.objects.get(pk=self.id_good.pk)
-            if good_item.count > self.count:
-                good_item.count -= self.count
+            if good_item.count > self.count_of_good:
+                good_item.count -= self.count_of_good
                 self.delete_from_shop = True
                 self.save()
                 good_item.save()
@@ -102,12 +102,12 @@ class Order(models.Model):
 
     def delete_order(self):
         good_item = Good.objects.get(pk=self.id_good.pk)
-        good_item.count += self.count
+        good_item.count += self.count_of_good
         self.delete()
         good_item.save()
 
     @staticmethod
     def create(bill, good, count):
-        a = Order(id_bill=bill, id_good=good, count=count)
+        a = Order(id_bill=bill, id_good=good, count_of_good=count)
         a.save()
         return a.pk

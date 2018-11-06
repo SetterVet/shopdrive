@@ -24,7 +24,8 @@ urlpatterns = [
     path('room/', views.room, name='room'),
     path('logout/', views.logout, name='logout'),
     path('registration/', views.registration, name='reg'),
-    path('createbill/',views.createbill, name='createbill'),
+
     path('deletebill/<int:pk>', views.deletebill , name='deletebill'),
-    path('editbill/<int:pk>',views.editbill,name='editbill')
+    path('editbill/<int:pk>',views.editbill,name='editbill'),
+
 ]

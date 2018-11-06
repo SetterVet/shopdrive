@@ -43,7 +43,7 @@ def shopgood(request):
         current_bill = Bill.objects.get(pk=created_bill_pk)
         today = datetime.date(datetime.today())
         current_goods = goods.filter(end_date__gte=today)
-        counts, pks = list(), list()
+
         for item in current_goods:
             if request.POST[str(item.pk)] != '':
                 good_item = Good.objects.get(pk=item.pk)
@@ -111,12 +111,6 @@ def registration(request):
     return render(request, 'shop/registration.html')
 
 
-def createbill(request):
-    if request.method == 'POST' and 'user_id' in request.session:
-        return HttpResponseRedirect('/user/' + str(request.session['user_id']))
-    else:
-        return HttpResponseRedirect("/good/")
-
 
 def deletebill(request,pk):
     current_bill=Bill.objects.get(pk=pk)
@@ -124,15 +118,45 @@ def deletebill(request,pk):
     return HttpResponseRedirect('/user/'+str(request.session['user_id']))
 
 def editbill(request,pk):
-    current_bill=Bill.objects.get(pk=pk)
-    orders=Order.objects.filter(id_bill=current_bill).all()
-    goods=Good.objects.all()
-    goods_in_bill = list()
-    for item in orders:
-        goods_in_bill.append(item.id_good)
-    goods_not_in_bill=list()
-    for item in goods:
-        if item not in goods_in_bill:
-            goods_not_in_bill.append(item)
-    return render(request, 'shop/editbill.html', {'bill': current_bill, 'orders': orders, '': goods,
-                  'in_bill':goods_in_bill,'not_in_bill':goods_not_in_bill})
+    if request.method == 'POST' and 'user_id' in request.session:
+        goods=Good.objects.all()
+
+        check_current_bill=Bill.objects.get(pk=pk).check_id
+        current_bill = Bill.objects.get(check_id=check_current_bill)
+        today = datetime.date(datetime.today())
+        current_goods = goods.filter(end_date__gte=today)
+        orders=Order.objects.filter(id_bill=current_bill).all()
+        for item in orders:
+            item.delete_order()
+
+
+
+        for item in current_goods:
+            if request.POST[str(item.pk)] != '':
+                good_item = Good.objects.get(pk=item.pk)
+                item_order = Order.create(bill=current_bill, good=good_item, count=request.POST[str(item.pk)])
+                current_bill_order = Order.objects.get(pk=item_order)
+                current_bill_order.delete_unit_from_shop()
+                if current_bill_order.delete_from_shop == False:
+                    current_bill_order.delete()
+
+        current_bill.set_total_price()
+        current_bill.save()
+        return HttpResponseRedirect('/user/' + str(request.session['user_id']))
+    else:
+        current_bill=Bill.objects.get(pk=pk)
+        orders=Order.objects.filter(id_bill=current_bill).all()
+        today=datetime.date(datetime.now())
+        goods=Good.objects.filter(end_date__gte=today).all()
+        goods_in_bill = list()
+        for item in orders:
+            goods_in_bill.append(item.id_good)
+        goods_not_in_bill=list()
+        for item in goods:
+            if item not in goods_in_bill:
+                goods_not_in_bill.append(item)
+        current_user=User.objects.get(pk=request.session['user_id'])
+        today=datetime.date(datetime.today())
+        return render(request, 'shop/editbill.html', {'bill': current_bill, 'orders': orders,
+                      'in_bill':goods_in_bill,'not_in_bill':goods_not_in_bill,'user':current_user,'today':today})
+
