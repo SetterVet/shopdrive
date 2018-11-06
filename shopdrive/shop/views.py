@@ -4,7 +4,7 @@ from .models import User, Good, Bill, Order
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 import json
-import datetime
+from datetime import datetime
 
 
 # Create your views here.
@@ -41,8 +41,10 @@ def shopgood(request):
         current_user = User.objects.get(pk=request.session['user_id'])
         created_bill_pk = Bill.create(user=current_user, godate=request.POST['expected_date'])
         current_bill = Bill.objects.get(pk=created_bill_pk)
+        today = datetime.date(datetime.today())
+        current_goods = goods.filter(end_date__gte=today)
         counts, pks = list(), list()
-        for item in goods:
+        for item in current_goods:
             if request.POST[str(item.pk)] != '':
                 good_item = Good.objects.get(pk=item.pk)
                 item_order = Order.create(bill=current_bill, good=good_item, count=request.POST[str(item.pk)])
@@ -55,7 +57,9 @@ def shopgood(request):
         current_bill.save()
         return HttpResponseRedirect('/user/' + str(request.session['user_id']))
     elif 'user_id' in request.session:
-        return render(request, 'shop/goodlist.html', {'goods': goods, 'login': True})
+        today = datetime.date(datetime.today())
+        print(today)
+        return render(request, 'shop/goodlist.html', {'goods': goods, 'login': True, 'today': today})
     else:
         return render(request, 'shop/goodlist.html', {'goods': goods, 'login': False})
 
@@ -123,3 +127,12 @@ def editbill(request,pk):
     current_bill=Bill.objects.get(pk=pk)
     orders=Order.objects.filter(id_bill=current_bill).all()
     goods=Good.objects.all()
+    goods_in_bill = list()
+    for item in orders:
+        goods_in_bill.append(item.id_good)
+    goods_not_in_bill=list()
+    for item in goods:
+        if item not in goods_in_bill:
+            goods_not_in_bill.append(item)
+    return render(request, 'shop/editbill.html', {'bill': current_bill, 'orders': orders, '': goods,
+                  'in_bill':goods_in_bill,'not_in_bill':goods_not_in_bill})
